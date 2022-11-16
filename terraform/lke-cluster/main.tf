@@ -6,7 +6,7 @@ provider "google" {
 }
 terraform {
   backend "gcs" {
-    bucket = "scaletific-dev"
+    bucket = "scaletific-terraform-dev-env"
     prefix = "terrform/state"
   }
 }
