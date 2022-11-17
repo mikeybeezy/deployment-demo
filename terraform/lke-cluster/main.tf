@@ -78,13 +78,13 @@ resource "google_compute_router_nat" "nat" {
   nat_ip_allocate_option             = "MANUAL ONLY"
 
   subnetwork {
-    name                               = google_compute_subnetwork.private.id
-    source_subnetwork_ip_ranges_to_nat = ["ALL_IP_RANGES"]
+    name                    = google_compute_subnetwork.private.id
+    source_ip_ranges_to_nat = ["ALL_SUBNETWORKS_ALL_IP_RANGES"]
   }
   nat_ips = [google_compute_address.nat.self_link]
 }
 resource "google_compute_address" "nat" {
-  name         = nat
+  name         = "nat"
   address_type = "EXTERNAL"
   network_tier = "PREMIUM"
   depends_on   = [google_project_service.compute]
@@ -97,7 +97,7 @@ resource "google_compute_firewall" "allow-ssh" {
 
   allow {
     protocol = "tcp"
-    portd    = ["22"]
+    ports    = ["22"]
   }
 
   source_ranges = ["0.0.0.0/0"]
@@ -111,8 +111,8 @@ resource "google_container_cluster" "primary" {
   network                  = google_compute_network.main.self_link
   subnetwork               = google_compute_subnetwork.private.self_link
   # logging_service          = "logging.googleapis.com/Kubernetes"
-  monitoring_service = "monitoring.googleapis.com/Kubernetes"
-  networking_mode    = "VPC_NATIVE"
+  # monitoring_service = "monitoring.googleapis.com/Kubernetes"
+  # networking_mode    = "VPC_NATIVE"
 
   # for multi zonal cluster
   node_locations = [
@@ -221,50 +221,3 @@ resource "google_container_node_pool" "spot" {
   }
 
 }
-
-
-
-
-
-# //Use the Linode Provider
-# provider "linode" {
-#   token = var.token
-# }
-
-# //Use the linode_lke_cluster resource to create
-# //a Kubernetes cluster
-# resource "linode_lke_cluster" "cool_linode_cluster" {
-#     k8s_version = var.k8s_version
-#     label = var.label
-#     region = var.region
-#     tags = var.tags
-
-#     dynamic "pool" {
-#         for_each = var.pools
-#         content {
-#             type  = pool.value["type"]
-#             count = pool.value["count"]
-#         }
-#     }
-# }
-
-# output "kubeconfig" {
-#    value = linode_lke_cluster.cool_linode_cluster.kubeconfig
-#    sensitive = true
-# }
-
-# output "api_endpoints" {
-#    value = linode_lke_cluster.cool_linode_cluster.api_endpoints
-# }
-
-# output "status" {
-#    value = linode_lke_cluster.cool_linode_cluster.status
-# }
-
-# output "id" {
-#    value = linode_lke_cluster.cool_linode_cluster.id
-# }
-
-# output "pool" {
-#    value = linode_lke_cluster.cool_linode_cluster.pool
-# }
