@@ -4,9 +4,11 @@ provider "google" {
   region      = "us-central1"
   zone        = "us-central1-c"
 }
+
+
 terraform {
   backend "gcs" {
-    bucket = "scaletific-terraform-dev-env"
+    bucket = "vpc-module-bucket"
     prefix = "terrform/state"
   }
 }
@@ -75,7 +77,7 @@ resource "google_compute_router_nat" "nat" {
   region = "us-central1"
 
   source_subnetwork_ip_ranges_to_nat = "LIST OF SUBNETWORKS"
-  nat_ip_allocate_option             = "MANUAL ONLY"
+  nat_ip_allocate_option             = "MANUAL_ONLY"
 
   subnetwork {
     name                    = google_compute_subnetwork.private.id
